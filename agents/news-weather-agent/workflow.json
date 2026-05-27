@@ -1,0 +1,178 @@
+{
+    "name": "News and Weather Feed AI Agent",
+    "nodes": [
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+            "typeVersion": 1.4,
+            "position": [
+                -368,
+                -128
+            ],
+            "id": "a7d63ac6-0abc-4a63-97dc-769ec0888071",
+            "name": "When chat message received",
+            "webhookId": "0ebc6533-f083-46f6-836f-5f6b23c5e5a7"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ $json.chatInput }}",
+                "options": {
+                    "systemMessage": "You are a calm, helpful AI assistant.\n\n----------------------------------------\nCORE RULES\n----------------------------------------\n- Be clear, concise, and polite\n- Do not be overly verbose\n- If unsure, ask for clarification\n\n----------------------------------------\nTOOL USAGE (STRICT)\n----------------------------------------\n\nYou MUST use tools when the query matches.\n\n### Weather Queries\nTrigger if user asks about:\nweather, temperature, forecast, rain, climate\n\nTool name: \"Weather API\"\n\nRules:\n- Extract city from user input\n- If missing → ask for location\n- NEVER answer from memory\n- ALWAYS call the tool first\n\n---\n\n### News Queries\nTrigger if user asks about:\nnews, headlines, current events, updates\n\nTool name: \"News API\"\n\nRules:\n- Identify topic if provided (tech, sports, etc.)\n- ALWAYS call the tool\n- NEVER generate news manually\n\n---\n\n----------------------------------------\nAFTER TOOL CALL\n----------------------------------------\n- Summarize results\n- Keep it short\n- Show only key points\n\n----------------------------------------\nCRITICAL\n----------------------------------------\n- Do NOT hallucinate tool data\n- Do NOT skip tool calls when required\n- If tool fails → inform user politely\n- Do NOT mention tools internally"
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3.1,
+            "position": [
+                -48,
+                -128
+            ],
+            "id": "8b04cb53-8560-463d-b6b0-2c61af45c383",
+            "name": "AI Agent"
+        },
+        {
+            "parameters": {},
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1.4,
+            "position": [
+                -64,
+                176
+            ],
+            "id": "01d4aa6b-dcc6-47d4-afbb-7a6adc51aca0",
+            "name": "Simple Memory"
+        },
+        {
+            "parameters": {
+                "model": "openrouter/free",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+            "typeVersion": 1,
+            "position": [
+                -256,
+                176
+            ],
+            "id": "b896a724-06ee-43e8-82d0-f1ff17bdbffc",
+            "name": "OpenRouter Chat Model",
+            "credentials": {
+                "openRouterApi": {
+                    "id": "9IRx8OFJ1IcE2OgC",
+                    "name": "OpenRouter account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.WEATHER_API_URL }}/current.json",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "key",
+                            "value": "={{ $env.WEATHER_API_KEY }}"
+                        },
+                        {
+                            "name": "q",
+                            "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.httpRequestTool",
+            "typeVersion": 4.4,
+            "position": [
+                208,
+                176
+            ],
+            "id": "f26aade8-5e02-47df-987f-f5de744fdd56",
+            "name": "Weather API"
+        },
+        {
+            "parameters": {
+                "url": "https://www.indiatoday.in/rss/home",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.rssFeedReadTool",
+            "typeVersion": 1.2,
+            "position": [
+                400,
+                176
+            ],
+            "id": "8bdbd386-f420-4538-aa22-31677c34da38",
+            "name": "News API"
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "When chat message received": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_memory",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenRouter Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Weather API": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "News API": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1",
+        "binaryMode": "separate"
+    },
+    "versionId": "5c43d924-7eec-4c9b-98e3-e46cf3c15a78",
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "340fc7aea0a8d7066c7b5964f4a286715d10b6e9a1e9487d8dd22e77009da1ce"
+    },
+    "id": "74tOmzhmIDE0c6Qj",
+    "tags": []
+}

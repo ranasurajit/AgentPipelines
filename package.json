@@ -1,0 +1,29 @@
+{
+  "name": "agentpipelines",
+  "version": "1.0.0",
+  "description": "A collection of AI agents designed as structured pipelines, leveraging n8n workflows and tool-driven reasoning for accurate, API-backed responses.",
+  "keywords": [
+    "ai-agents",
+    "n8n",
+    "agent-workflows",
+    "agentic-ai"
+  ],
+  "homepage": "https://github.com/ranasurajit/AgentPipelines#readme",
+  "bugs": {
+    "url": "https://github.com/ranasurajit/AgentPipelines/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ranasurajit/AgentPipelines.git"
+  },
+  "license": "MIT",
+  "author": "surajit.rana",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "dotenv -e .env -- n8n start"
+  }
+}
