@@ -49,7 +49,8 @@ AgentPipelines/
 ├── .env.example
 ├── .gitignore
 |__ .env
-└── README.md
+|
+|── README.md
 ```
 
 ---
